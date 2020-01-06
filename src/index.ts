@@ -1,7 +1,10 @@
-import {User} from './models/User';
+import {Collection} from "./models/Collection";
 
-const user = new User({id:1});
+const collection = new Collection("http://localhost:3000/users");
 
-user.set({name: "NEW NAME", age: 9999}, new Eventing());
+collection.fetch();
 
-user.save();
+collection.on('change', () => {
+    console.log(collection.models);
+});
+

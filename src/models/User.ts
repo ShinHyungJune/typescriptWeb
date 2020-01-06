@@ -1,43 +1,23 @@
-import axios, {AxiosResponse} from 'axios';
+import {Model} from "./Model";
+import {ApiSync} from "./ApiSync";
+import {Attribute} from "./Attribute";
 import {Eventing} from "./Eventing";
 
-interface UserProps {
+export interface UserProps {
     id?: number;
     name?: string;
     age?: number;
 }
 
+const rootUrl = "http://localhost:3000/users";
 
-export class User {
-    events:Eventing = new Eventing();
-
-    constructor(private data: UserProps) {};
-
-    get(propName: string): number | string{
-        return this.data[propName];
-    }
-
-    set(data: UserProps): void {
-        Object.assign(this.data, data);
-    }
-
-    fetch(): void {
-        axios.get(`http:localhost:3000/users/${this.get("id")}`)
-            .then((response: AxiosResponse): void => {
-                this.set(response.data);
-            })
-    }
-
-    save(): void {
-        const id = this.get("id");
-
-        if(this.get("id")){
-            // put
-            axios.put(`http://localhost:3000/users/${this.get("id")}`, this.data)
-        }else{
-            // post
-            axios.post("http:localhost:3000/users/users", this.data);
-        }
+export class User extends Model<UserProps>{
+    static build(attrs: UserProps): User {
+        return new User(
+            new Attribute<UserProps>(attrs),
+            new Eventing(),
+            new ApiSync<UserProps>(rootUrl)
+        )
     }
 }
 
